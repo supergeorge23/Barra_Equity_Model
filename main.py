@@ -47,4 +47,4 @@ combined_results = np.array(results)
 # If you're running on only one GPU, there will be only one set of results
 # So you can just take the first element of the list
 print(combined_results)
-np.save('20230512_combined_results.npy', combined_results)
+# np.save('20230512_combined_results.npy', combined_results)

@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import pickle
 
-
 def retrieve_data_old(start_date, end_date):
     # Convert strings to datetime objects
     start_date = pd.to_datetime(start_date)
@@ -80,7 +79,22 @@ def retrieve_data(start_date, end_date):
     all_index_data.sort_values('TRADE_DT', inplace=True)
     return all_stock_data, all_index_data
 
-
+def create_stock_data_matrix(sorted_data, price_col_idx=21):
+    # Identify unique stock codes
+    unique_stock_codes = np.unique(sorted_data[:, 1])
+    print("unique_stock_codes has been collected!")
+    # Initialize an empty list to hold the data for each stock
+    stock_data_list = []
+    # For each unique stock code, extract its price data and append to the list
+    for stock_code in unique_stock_codes:
+        stock_data = sorted_data[sorted_data[:, 1] == stock_code][:, price_col_idx]
+        stock_data_list.append(stock_data)
+    # Convert the list to a numpy array and transpose it
+    # So that each column represents a unique stock's price data
+    stock_data_matrix = np.array(stock_data_list).T
+    np.save('stock_data_matrix_20230512.npy', stock_data_matrix)
+    print("create_stock_data_matrix has been finished")
+    return stock_data_matrix
 
 # Use the function to retrieve data
 # beginDate = '2018.05.09'
@@ -89,22 +103,7 @@ endDate = '2023.05.12'
 all_stock_data, all_index_data = retrieve_data(beginDate, endDate)
 
 
-
-
-# # Save the retrieved data to pickle files for future use
-# all_stock_data.to_pickle("./all_stock_data.pkl")
-# all_index_data.to_pickle("./all_index_data.pkl")
-
-# # Load the pickle file into a DataFrame
-# all_stock_data = pd.read_pickle("./all_stock_data.pkl") # AShareEODDerivativeIndicator
-# all_index_data = pd.read_pickle("./all_index_data.pkl") # AIndexEODPrices
-# # Save the DataFrame as a text file
-# all_stock_data.to_csv("./all_stock_data.txt", sep='\t')
-# all_index_data.to_csv("./all_index_data.txt", sep='\t')
-
-
 if __name__ == "__main__":
-
     # Convert pandas DataFrame to numpy array
     all_stock_data_np = all_stock_data.values
     all_stock_data_np = all_stock_data_np[all_stock_data_np[:, 1].argsort()]
@@ -112,21 +111,9 @@ if __name__ == "__main__":
     all_index_data_np = all_index_data.values
     all_index_data_np = all_index_data_np[all_index_data_np[:, 1].argsort()]
 
-    # with open('./all_stock_data_np.pkl', 'rb') as f:
-    #     all_stock_data_np = pickle.load(f)
-    #
-    # with open('./all_index_data_np.pkl', 'rb') as f:
-    #     all_index_data_np = pickle.load(f)
-
-    # print(all_stock_data_np)
-
     np.save('all_stock_data_np.npy', all_stock_data_np)
     np.save('all_index_data_np.npy', all_index_data_np)
 
-    # all_stock_data_np = np.load('all_stock_data_np.npy')
-    # all_index_data_np = np.load('all_index_data_np.npy')
-
-    # print(all_stock_data_np)
 
 
 
